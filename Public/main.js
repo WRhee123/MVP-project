@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     // const baseURL = 'http://localhost:3000/api/workouts'
     let body = document.getElementsByTagName('body')[0];
-    
+    body.style.backgroundColor = '#000000'
 
 const createTitleContainer =() => {let titleContainer = document.createElement('div');
 titleContainer.style.display = 'flex'
@@ -10,9 +10,26 @@ titleContainer.style.justifyContent = 'center';
 titleContainer.style.backgroundColor = 'gray';
 titleContainer.style.height = '20vh';
 titleContainer.style.width = '98vw';
-titleContainer.textContent = 'MVP Fitness';
+// titleContainer.textContent = 'MVP Fitness';
 titleContainer.style.textAlign = 'center';
 titleContainer.style.fontSize = '100px'
+ // Create a span element for italic styling
+ let titleSpan = document.createElement('span');
+ titleSpan.textContent = 'MVP ';
+ titleSpan.style.color = '#E5E5E5'
+
+ // Create a span element for the non-italic part
+ let fitnessSpan = document.createElement('span');
+ fitnessSpan.style.fontStyle = 'italic';
+ fitnessSpan.style.color = '#FCA311'
+ fitnessSpan.textContent = 'Fitness';
+
+ // Append both spans to the title container
+ titleContainer.appendChild(titleSpan);
+ titleContainer.appendChild(fitnessSpan);
+
+ titleContainer.style.fontSize = '100px';
+
 body.appendChild(titleContainer);}
 createTitleContainer();
 
@@ -30,6 +47,7 @@ body.appendChild(buttonContainer);
 let homeButton = document.createElement('button');
 homeButton.textContent = 'Home'
 homeButton.style.width = '100px'
+homeButton.className = 'rounded-button'
 buttonContainer.appendChild(homeButton)
 homeButton.addEventListener('click', () => {
     $(mainContainer).hide();
@@ -44,6 +62,7 @@ homeButton.addEventListener('click', () => {
     $(workoutContainer).empty();
     $(createWorkoutContainer).hide();
     $(loginContainer).hide();
+    $(addExerciseContainer).hide();
 })
 //need to finish this function when login feature is working
 const getUsersWorkouts = async() => {
@@ -59,6 +78,7 @@ console.log(data)
 
 let myWorkoutButton = document.createElement('button');
 myWorkoutButton.textContent = 'My Workouts';
+myWorkoutButton.className = 'rounded-button'
 buttonContainer.appendChild(myWorkoutButton);
 
 myWorkoutButton.addEventListener('click', getUsersWorkouts )
@@ -68,12 +88,13 @@ myWorkoutButton.addEventListener('click', getUsersWorkouts )
 
 
 let loginContainer = document.createElement('div');
+loginContainer.style.borderRadius = '15px'
 loginContainer.style.display = 'flex'
 loginContainer.style.alignItems = 'center'
 loginContainer.style.justifyContent = 'center'
 loginContainer.style.height = "50vh"
 loginContainer.style.width = '50vw';
-loginContainer.style.backgroundColor = 'red';
+loginContainer.style.backgroundColor = '#14213D';
 loginContainer.style.margin = 'auto'
 loginContainer.style.marginTop = '5rem'
 body.appendChild(loginContainer);
@@ -91,20 +112,24 @@ let userNameInput = document.createElement('input')
 userNameInput.placeholder = 'Username'
 userNameInput.id = "userName"
 userNameInput.type = 'text'
+userNameInput.style.borderRadius = '5px'
 form.appendChild(userNameInput);
 
 let passwordInput = document.createElement('input');
 passwordInput.placeholder = 'Password'
 passwordInput.id = 'password'
 passwordInput.type = 'text'
+passwordInput.style.borderRadius = '5px'
 form.appendChild(passwordInput);
 
 let loginButton = document.createElement('button');
 loginButton.textContent = 'Login';
+loginButton.className = 'rounded-button'
 form.appendChild(loginButton);
 
 let registerButton = document.createElement('button');
 registerButton.textContent = 'Register';
+registerButton.className = 'rounded-button'
 form.appendChild(registerButton);
 
 registerButton.addEventListener('click', async() => {
@@ -176,16 +201,23 @@ name.style.margin ='auto';
 createWorkoutContainer.appendChild(name)
 $(createWorkoutContainer).hide();
 
-let nameInput = document.createElement('input');
-nameInput.style.height = '30px';
-nameInput.style.width = '50px;'
-nameInput.id = 'userNameInput'
-nameInput.type = 'text'
-createWorkoutContainer.appendChild(nameInput);
+let workoutNameInput = document.createElement('input');
+workoutNameInput.style.borderRadius = '5px'
+workoutNameInput.style.height = '30px';
+workoutNameInput.style.width = '50px;'
+workoutNameInput.id = 'userNameInput'
+workoutNameInput.type = 'text'
+createWorkoutContainer.appendChild(workoutNameInput);
 
 let submitButton = document.createElement('button');
 submitButton.textContent = 'Submit';
+submitButton.className = 'rounded-button'
 createWorkoutContainer.appendChild(submitButton);
+
+let deleteWorkoutButton = document.createElement('button');
+deleteWorkoutButton.textContent = 'Delete Workout';
+deleteWorkoutButton.className = 'rounded-button'
+createWorkoutContainer.appendChild(deleteWorkoutButton)
 
 
 let addExerciseContainer = document.createElement('div');
@@ -201,6 +233,7 @@ let exerciseLabel = document.createElement('label');
 exerciseLabel.textContent = 'exercise name';
 addExerciseContainer.appendChild(exerciseLabel);
 let exerciseInput = document.createElement('input');
+exerciseInput.style.borderRadius = '5px'
 exerciseInput.style.width = '10%'
 exerciseInput.id = 'exercise'
 addExerciseContainer.appendChild(exerciseInput);
@@ -210,6 +243,7 @@ let setsLabel = document.createElement('label');
 setsLabel.textContent = 'sets';
 addExerciseContainer.appendChild(setsLabel);
 let setsInput = document.createElement('input');
+setsInput.style.borderRadius = '5px'
 setsInput.id = 'sets'
 setsInput.style.width = '10%'
 addExerciseContainer.appendChild(setsInput);
@@ -218,6 +252,7 @@ let repsLabel = document.createElement('label');
 repsLabel.textContent = 'reps';
 addExerciseContainer.appendChild(repsLabel);
 let repsInput = document.createElement('input');
+repsInput.style.borderRadius = '5px'
 repsInput.id = 'reps'
 repsInput.style.width = '10%'
 addExerciseContainer.appendChild(repsInput);
@@ -225,6 +260,7 @@ addExerciseContainer.appendChild(repsInput);
 let addExerciseButton = document.createElement('button');
 addExerciseButton.textContent = 'Add Exercise';
 addExerciseButton.style.width = "10%"
+addExerciseButton.className = 'rounded-button'
 addExerciseContainer.appendChild(addExerciseButton);
 
 addExerciseButton.addEventListener('click', async() => {
@@ -289,6 +325,7 @@ submitButton.addEventListener('click', () => {
 
 let createWorkoutButton = document.createElement('button');
 createWorkoutButton.textContent = 'Create Workout';
+createWorkoutButton.className = 'rounded-button'
 buttonContainer.appendChild(createWorkoutButton)
 createWorkoutButton.addEventListener('click', () => {
     $(mainContainer).hide();
@@ -311,7 +348,7 @@ mainContainer.style.flexFlow = 'center'
 mainContainer.style.alignItems = 'center'
 mainContainer.style.justifyContent = 'space-around'
 mainContainer.style.padding = '50px'
-mainContainer.style.backgroundColor = 'blue'
+mainContainer.style.backgroundColor = '#14213D'
 body.appendChild(mainContainer);
 $(mainContainer).hide();
 
@@ -334,6 +371,7 @@ $(workoutContainer).hide();
        console.log(data)
    let pushButton = document.createElement('button');
    pushButton.textContent = data[0].workout_name
+   pushButton.className = 'rounded-button'
    pushButton.style.fontSize = '30px'
    pushButton.style.height = '20vh'
    pushButton.style.width = '20vw'
@@ -350,27 +388,30 @@ $(workoutContainer).hide();
     $(mainContainer).hide();
     $(workoutContainer).show();
     data.forEach((exercise) => {
-      let pullContainer = document.createElement('div');
-    pullContainer.style.height = '30vh';
-    pullContainer.style.width = '15vw';
-    pullContainer.style.backgroundColor = 'white';
-    workoutContainer.appendChild(pullContainer) ;
+      let pushContainer = document.createElement('div');
+      $(pushContainer).hide();
+      $(pushContainer).fadeIn(1000);
+      pushContainer.style.borderRadius = '10px'
+    pushContainer.style.height = '30vh';
+    pushContainer.style.width = '15vw';
+    pushContainer.style.backgroundColor = 'white';
+    workoutContainer.appendChild(pushContainer) ;
     
     let h1 = document.createElement('h1');
     h1.textContent = exercise.exercise_name;
-    pullContainer.appendChild(h1);
+    pushContainer.appendChild(h1);
 
     let sets = document.createElement('h3');
     sets.textContent = `sets: ${exercise.set_number}`;
-    pullContainer.appendChild(sets);
+    pushContainer.appendChild(sets);
 
     let reps = document.createElement('h3');
     reps.textContent = `reps: ${exercise.reps}`;
-    pullContainer.appendChild(reps);
+    pushContainer.appendChild(reps);
 
     let difficulty = document.createElement('h3');
     difficulty.textContent = `difficulty: ${exercise.difficulty}`
-    pullContainer.appendChild(difficulty)
+    pushContainer.appendChild(difficulty)
     })
    
     
@@ -378,6 +419,7 @@ $(workoutContainer).hide();
 
    let pullButton = document.createElement('button');
    pullButton.textContent = data[1].workout_name;
+   pullButton.className = 'rounded-button'
    pullButton.style.fontSize = '30px'
    pullButton.style.height = '20vh'
    pullButton.style.width = '20vw'
@@ -395,6 +437,9 @@ $(workoutContainer).hide();
     $(workoutContainer).show();
     data.forEach((exercise) => {
       let pullContainer = document.createElement('div');
+      $(pullContainer).hide();
+      $(pullContainer).fadeIn(1000);
+      pullContainer.style.borderRadius = '10px'
     pullContainer.style.height = '30vh';
     pullContainer.style.width = '15vw';
     pullContainer.style.backgroundColor = 'white';
@@ -420,6 +465,7 @@ $(workoutContainer).hide();
 
    let legsButton = document.createElement('button');
     legsButton.textContent = data[2].workout_name;
+    legsButton.className = 'rounded-button'
     legsButton.style.fontSize = '30px'
    legsButton.style.height = '20vh'
    legsButton.style.width = '20vw'
@@ -437,6 +483,13 @@ legsButton.addEventListener('click', async() => {
     $(workoutContainer).show();
     data.forEach((exercise) => {
       let legsContainer = document.createElement('div');
+      $(legsContainer).hide();
+      $(legsContainer).fadeIn(1000);
+      legsContainer.style.dispaly = 'flex'
+      legsContainer.style.flex = 'wrap'
+      legsContainer.style.justifyContent = 'space-around'
+      legsContainer.style.borderRadius = '10px'
+      legsContainer.style.margin = '10px'
     legsContainer.style.height = '30vh';
     legsContainer.style.width = '15vw';
     legsContainer.style.backgroundColor = 'white';
