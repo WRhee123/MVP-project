@@ -1,16 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
     // const baseURL = 'http://localhost:3000/api/workouts'
     let body = document.getElementsByTagName('body')[0];
-
-    // let button = document.createElement('button');
-    // button.textContent = 'Home'
-    // body.appendChild(button)
-
-    // button.addEventListener('click', () => {
-    //     homePage();
-    // })
     
-let titleContainer = document.createElement('div');
+
+const createTitleContainer =() => {let titleContainer = document.createElement('div');
 titleContainer.style.display = 'flex'
 titleContainer.style.alignItems = 'center'
 titleContainer.style.justifyContent = 'center';
@@ -20,7 +13,9 @@ titleContainer.style.width = '98vw';
 titleContainer.textContent = 'MVP Fitness';
 titleContainer.style.textAlign = 'center';
 titleContainer.style.fontSize = '100px'
-body.appendChild(titleContainer);
+body.appendChild(titleContainer);}
+createTitleContainer();
+
 
 let buttonContainer = document.createElement('div');
 buttonContainer.style.height = '5vh';
@@ -29,6 +24,8 @@ buttonContainer.style.backgroundColor = 'black';
 buttonContainer.style.display = 'flex'
 buttonContainer.style.gap = '20px'
 body.appendChild(buttonContainer);
+
+
 
 let homeButton = document.createElement('button');
 homeButton.textContent = 'Home'
@@ -42,6 +39,95 @@ homeButton.addEventListener('click', () => {
     $(workoutContainer).hide();
     $(workoutContainer).empty();
     $(createWorkoutContainer).hide();
+    $(loginContainer).hide();
+})
+
+
+
+let loginContainer = document.createElement('div');
+loginContainer.style.display = 'flex'
+loginContainer.style.alignItems = 'center'
+loginContainer.style.justifyContent = 'center'
+loginContainer.style.height = "50vh"
+loginContainer.style.width = '50vw';
+loginContainer.style.backgroundColor = 'red';
+loginContainer.style.margin = 'auto'
+loginContainer.style.marginTop = '5rem'
+body.appendChild(loginContainer);
+
+let form = document.createElement('form');
+form.style.display = 'flex';
+form.style.flexDirection = 'column';
+form.style.alignItems = 'center'
+form.style.justifyContent = 'center'
+form.style.gap = '10px';
+loginContainer.appendChild(form)
+
+let userNameInput = document.createElement('input')
+// userNameInput.type = 'text';
+userNameInput.placeholder = 'Username'
+userNameInput.id = "userName"
+form.appendChild(userNameInput);
+
+let passwordInput = document.createElement('input');
+passwordInput.placeholder = 'Password'
+passwordInput.id = 'password'
+form.appendChild(passwordInput);
+
+let loginButton = document.createElement('button');
+loginButton.textContent = 'Login';
+form.appendChild(loginButton);
+
+let registerButton = document.createElement('button');
+registerButton.textContent = 'Register';
+form.appendChild(registerButton);
+
+loginButton.addEventListener('click', async() => {
+let userName = document.getElementById('userName').value;
+let password = document.getElementById('password').value;
+try{
+    let response = await fetch('http://localhost:3000/api/users/login', {
+        method: 'POST',
+        body: JSON.stringify({
+            users_name: userName,
+            users_password: password
+        }), headers: {
+            "Content-Type": 'application/json; charset=UTF-8'
+        }
+    });
+    if(response.ok) {
+        let resData = await response.json();
+        console.log('login successful', resData)
+    } else {
+        console.log('login unsuccessful')
+    }
+}catch(error) {
+console.log(error.stack);
+}
+})
+
+registerButton.addEventListener('click', async() => {
+    let userName = document.getElementById('userName').value;
+    let password = document.getElementById('password').value;
+    try{
+        let response = await fetch('http://localhost:3000/api/users/register', {
+            method: "POST",
+            body: JSON.stringify({
+                users_name: userName,
+                users_password: password
+            }), headers: {
+                "Content-Type": 'application/json; charset=UTF-8'
+            }
+        });
+        if(response.ok) {
+            let resData = await response.json();
+            console.log('Registration successful', resData);
+        } else {
+            console.log('Registration unsuccessful');
+        }
+    }catch(error) {
+    console.log(error.stack)
+    }
 })
 
 let createWorkoutContainer = document.createElement('div');
@@ -173,11 +259,7 @@ createButton.addEventListener('click', () => {
     $(createWorkoutContainer).show();
 })
 
-let loginContainer = document.createElement('div');
-loginContainer.style.height = "50vh"
-loginContainer.style.width = '50vw';
-loginContainer.style.backgroundColor = 'red';
-body.appendChild(loginContainer);
+
 
 let mainContainer = document.createElement('div');
 mainContainer.style.display = 'flex';
