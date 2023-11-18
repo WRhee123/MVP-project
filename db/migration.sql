@@ -14,11 +14,16 @@ CREATE TABLE exercises(
     workout_id INTEGER REFERENCES workouts(id)
 );
 
-
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY NOT NULL,
+    users_name VARCHAR(50),
+    users_password VARCHAR(50)
+);
 
 CREATE TABLE users_workout(
     id SERIAL PRIMARY KEY NOT NULL,
-    workout_name VARCHAR(50)
+    workout_name TEXT
+    user_id INTEGER REFERENCES users(id);
 );
 
 CREATE TABLE all_exercises(
@@ -30,7 +35,3 @@ CREATE TABLE all_exercises(
     users_id INTEGER REFERENCES users_workout(id)
 );
 
--- CREATE TABLE exercise_type(
---     id SERIAL PRIMARY KEY NOT NULL,
---      muscle_group VARCHAR(50)
--- );

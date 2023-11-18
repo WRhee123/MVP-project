@@ -41,11 +41,143 @@ homeButton.addEventListener('click', () => {
     $(legsButton).show();
     $(workoutContainer).hide();
     $(workoutContainer).empty();
+    $(createWorkoutContainer).hide();
+})
+
+let createWorkoutContainer = document.createElement('div');
+createWorkoutContainer.style.height = '75vh';
+createWorkoutContainer.style.width= '98.2vw';
+createWorkoutContainer.style.backgroundColor = 'green';
+createWorkoutContainer.style.textAlign = 'center'
+// createWorkoutContainer.style.display = 'flex';
+// createWorkoutContainer.style.flexDirection ='row';
+// createWorkoutContainer.style.justifyContent = 'center';
+// createWorkoutContainer.style.alignItems = 'center'
+body.appendChild(createWorkoutContainer);
+
+let name = document.createElement('label');
+name.textContent = 'Workout Name';
+name.style.fontSize = '50px'
+name.style.margin ='auto';
+createWorkoutContainer.appendChild(name)
+$(createWorkoutContainer).hide();
+
+let nameInput = document.createElement('input');
+nameInput.style.height = '30px';
+nameInput.style.width = '50px;'
+nameInput.id = 'userNameInput'
+nameInput.type = 'text'
+createWorkoutContainer.appendChild(nameInput);
+
+let submitButton = document.createElement('button');
+submitButton.textContent = 'Submit';
+createWorkoutContainer.appendChild(submitButton);
+
+
+let userWorkoutContainer = document.createElement('div');
+userWorkoutContainer.style.height = '75vh';
+userWorkoutContainer.style.width = '98.2vw';
+userWorkoutContainer.style.backgroundColor = 'yellow';
+body.appendChild(userWorkoutContainer);
+$(userWorkoutContainer).hide();
+
+let exerciseLabel = document.createElement('label');
+exerciseLabel.textContent = 'exercise name';
+userWorkoutContainer.appendChild(exerciseLabel);
+let exerciseInput = document.createElement('input');
+exerciseInput.id = 'exercise'
+userWorkoutContainer.appendChild(exerciseInput);
+
+
+let setsLabel = document.createElement('label');
+setsLabel.textContent = 'sets';
+userWorkoutContainer.appendChild(setsLabel);
+let setsInput = document.createElement('input');
+setsInput.id = 'sets'
+userWorkoutContainer.appendChild(setsInput);
+
+let repsLabel = document.createElement('label');
+repsLabel.textContent = 'reps';
+userWorkoutContainer.appendChild(repsLabel);
+let repsInput = document.createElement('input');
+repsInput.id = 'reps'
+userWorkoutContainer.appendChild(repsInput);
+
+let addExerciseButton = document.createElement('button');
+addExerciseButton.textContent = 'Add Exercise';
+userWorkoutContainer.appendChild(addExerciseButton);
+
+addExerciseButton.addEventListener('click', async() => {
+try {
+    let exerciseValue = document.getElementById('exercise').value;
+    let setsValue = document.getElementById('sets').value;
+    let repsValue = document.getElementById('reps').value;
+    let response = await fetch('http://localhost:3000/api/all_exercises', {
+        method: 'POST',
+        body:JSON.stringify({
+            exercise: exerciseValue,
+            set_number: setsValue,
+            reps: repsValue
+        }),
+        headers: {
+            "Content-Type": 'application/json; charset=UTF-8'
+        }
+    });
+    if(response.ok) {
+        let resData = await response.json();
+        console.log('exercise added', resData)
+    } else {
+        console.log('exercise was not added')
+    }
+}catch(error) {
+console.log(error.stack)
+}
+})
+
+submitButton.addEventListener('click', async() => {
+try{
+    let nameValue = document.getElementById('userNameInput').value;
+    let response = await fetch('http://localhost:3000/api/users_workout', {
+        method: "POST",
+        body:JSON.stringify({
+            workout_name: nameValue
+        }),
+        headers: {
+            "Content-Type": "application/json; charset=UTF-8"
+        }
+    });
+    if(response.ok) {
+        let resData = await response.json();
+        console.log("Workout name added", resData)
+    } else {
+        console.log('Workout name was not added')
+    }
+}catch(error) {
+    console.log(error.stack);
+}
+})
+
+submitButton.addEventListener('click', () => {
+    $(userWorkoutContainer).show()
+    $(mainContainer).hide()
+    $(createWorkoutContainer).hide();
 })
 
 let createButton = document.createElement('button');
 createButton.textContent = 'Create Workout';
 buttonContainer.appendChild(createButton)
+createButton.addEventListener('click', () => {
+    $(mainContainer).hide();
+    $(workoutContainer).hide();
+    $(workoutContainer).empty();
+    $(createWorkoutContainer).show();
+})
+
+let loginContainer = document.createElement('div');
+loginContainer.style.height = "50vh"
+loginContainer.style.width = '50vw';
+loginContainer.style.backgroundColor = 'red';
+body.appendChild(loginContainer);
 
 let mainContainer = document.createElement('div');
 mainContainer.style.display = 'flex';
@@ -53,13 +185,13 @@ mainContainer.style.flexDirection = 'row';
 mainContainer.style.justifyContent = 'center';
 mainContainer.style.height = '75vh';
 mainContainer.style.width = '92.8vw';
-// mainContainer.style.backgroundColor = 'blue';
 mainContainer.style.flexFlow = 'center'
 mainContainer.style.alignItems = 'center'
 mainContainer.style.justifyContent = 'space-around'
 mainContainer.style.padding = '50px'
 mainContainer.style.backgroundColor = 'blue'
 body.appendChild(mainContainer);
+$(mainContainer).hide();
 
 let workoutContainer = document.createElement('div');
 workoutContainer.style.display = 'flex';
