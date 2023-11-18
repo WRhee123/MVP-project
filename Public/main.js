@@ -65,23 +65,23 @@ homeButton.addEventListener('click', () => {
     $(addExerciseContainer).hide();
 })
 //need to finish this function when login feature is working
-const getUsersWorkouts = async() => {
-try {
-let response = await fetch('http://localhost:3000/api/users_workout/:id');
-const data = await response.json();
-console.log(data)
+// const getUsersWorkouts = async() => {
+// try {
+// let response = await fetch('http://localhost:3000/api/users_workout/:id');
+// const data = await response.json();
+// console.log(data)
 
-}catch(error) {
+// }catch(error) {
 
-}
-}
+// }
+// }
 
 let myWorkoutButton = document.createElement('button');
 myWorkoutButton.textContent = 'My Workouts';
 myWorkoutButton.className = 'rounded-button'
 buttonContainer.appendChild(myWorkoutButton);
 
-myWorkoutButton.addEventListener('click', getUsersWorkouts )
+// myWorkoutButton.addEventListener('click', getUsersWorkouts )
 
 
 
@@ -135,12 +135,12 @@ registerButton.type = 'submit';
 form.appendChild(registerButton);
 
 registerButton.addEventListener('click', async(e) => {
-    let userName = document.getElementById('userName').target.value;
-    let password = document.getElementById('password').target.value;
+   
+    try{
+         let userName = document.getElementById('userName').value;
+    let password = document.getElementById('password').value;
     console.log(userName);
     console.log(password);
-    console.log(e.target.value);
-    try{
         let response = await fetch('http://localhost:3000/api/users/register', {
             method: "POST",
             body: JSON.stringify({
@@ -150,7 +150,7 @@ registerButton.addEventListener('click', async(e) => {
                 "Content-Type": 'application/json; charset=UTF-8'
             }
         });
-        console.log(body);
+        console.log(await response.json())
         if(response.ok) {
             let resData = await response.json();
             console.log('Registration successful', resData);
@@ -211,7 +211,7 @@ let workoutNameInput = document.createElement('input');
 workoutNameInput.style.borderRadius = '5px'
 workoutNameInput.style.height = '30px';
 workoutNameInput.style.width = '50px;'
-workoutNameInput.id = 'userNameInput'
+workoutNameInput.id = 'workoutName'
 workoutNameInput.type = 'text'
 createWorkoutContainer.appendChild(workoutNameInput);
 
@@ -225,13 +225,30 @@ deleteWorkoutButton.textContent = 'Delete Workout';
 deleteWorkoutButton.className = 'rounded-button'
 createWorkoutContainer.appendChild(deleteWorkoutButton)
 
-// deleteWorkoutButton.addEventListener('click', () => {
-//     try {
-//         const response = await fetch('http://localhost:3000/api/users_workout/:id')
-//     }catch(error) {
 
-//     }
-// })
+//might need to edit later 
+deleteWorkoutButton.addEventListener('click', async() => {
+    try {
+        const workoutNameToDelete = document.getElementById('workoutName').value;
+        const response = await fetch('http://localhost:3000/api/users_workout/:${userId}', {
+            method: "DELETE",
+            header: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                workout_name: workoutNameToDelete,
+            }),
+        });
+        if(response.ok) {
+            let resData = await response.json();
+            console.log('Workout deleted', resData)
+        } else {
+            console.log('Failed to delete workout')
+        }
+    }catch(error) {
+console.log(error);
+    }
+})
 
 
 let addExerciseContainer = document.createElement('div');

@@ -25,15 +25,15 @@ app.use(express.static('Public'))
 
 //routes for login/register
 app.post('/api/users/register', async(req, res) => {
-    const {username, password} = req.body;
+    const {users_name, users_password} = req.body;
  
     try {
-        const existingUser = await pool.query('SELECT * FROM users WHERE users_name = $1', [username]);
+        const existingUser = await pool.query('SELECT * FROM users WHERE users_name = $1', [users_name]);
         if(existingUser.rows.length > 0) {
             return res.status(400).json({error: 'Username already exists'});
         }
     //    const hashPassword = await bcrypt.hash(password, 10);
-        const result = await pool.query('INSERT INTO users(users_name, users_password) VALUES ($1, $2) RETURNING *', [username, password]);
+        const result = await pool.query('INSERT INTO users(users_name, users_password) VALUES ($1, $2) RETURNING *', [users_name, users_password]);
         const newUser = result.rows[0];
         console.log(newUser)
         res.status(200).json(newUser)
@@ -44,12 +44,12 @@ app.post('/api/users/register', async(req, res) => {
 })
 
 app.post('/api/users/login', async(req, res) => {
-     const {username, password} = req.body;
+     const {users_name, users_password} = req.body;
     try {
-       const result = await pool.query('SELECT * FROM users WHERE users_name = $1', [username]);
+       const result = await pool.query('SELECT * FROM users WHERE users_name = $1', [users_name]);
         if(result.rows.length > 0) {
             const user = result.rows[0];
-            const passwordCheck = await bcrypt.compare(password, user.users_password);
+            const passwordCheck = await bcrypt.compare(users_password, user.users_password);
             
             if(passwordCheck) {
                 res.status(200).json({message: 'Login Succesful'});
@@ -65,6 +65,75 @@ app.post('/api/users/login', async(req, res) => {
         res.status(500).json({error: 'Internal Server Error'})
     }
 });
+
+//Routes for users table
+app.get('/api/users', async(req, res) => {
+    try{
+        const result = await pool.query("SELECT * FROM users")
+        res.send(result.rows)
+    }catch(error) {
+        console.log(error.stack);
+        res.status(500).json({error: 'Internal Server Error'})
+    }
+})
+
+app.get('/api/users/:id', async(req, res) => {
+    try {
+        const id = parseInt(req.params.id);
+        if(isNaN(id)|| id < 0) {
+            return res.status(400).json({error: 'Invalid Id'})
+        } else {
+            let result = await pool.query('SELECT * FROM users WHERE id = $1', [id]);
+            if(result.rows.length === 0) {
+                return res.status(400).json({error: 'Not Found'})
+            }
+            return res.status(200).send(result.rows[0])
+        }
+    }catch(error) {
+        console.log(error.stack);
+        res.status(500).json({error: 'Internal Server Error'})
+    }
+})
+
+app.post('/api/users', async(req, res) => {
+    try{
+        const {users_name, users_password} = req.body;
+        let result = await pool.query('INSERT INTO users (users_name, users_password) VALUES ($1, $2) RETURNING *', [users_name, users_password]
+        );
+        res.send(result.rows[0])
+    }catch(error) {
+        console.log(error);
+        res.status(500).json({error: 'Internal Server Error'})
+    }
+})
+
+app.put('/api/users/:id', async(req, res) => {
+    try {
+        const id = parseInt(req.params.id);
+        const {users_name} = req.body;
+        const result = await pool.query(
+            'UPDATE users SET users_name = $1 WHERE id = $2 RETURNING *', [users_name, id]
+        );
+        console.log(result.rows)
+        if(result.rows.length === 0) {
+            return res.status(400).send('user not found')
+        }
+        res.json(result.rows[0]);
+    }catch(error) {
+        console.log(error.stack);
+        res.status(500).json({error: 'Internal Server Error'})
+    }
+})
+app.delete('/api/users/id', async(req, res) => {
+    try {
+        let id = parseInt(req.params.id);
+        let result = await pool.query('DELETE FROM users WHERE id = $1 RETURNING *', [id]);
+        res.status(200).send(result.rows[0])
+    } catch(error) {
+        console.log(error.stack);
+        res.status(500).json({error: 'Internal Server Error'})
+    }
+})
 //Routes for workouts table
 app.get('/api/workouts', async(req,res) => {
     try{
@@ -270,8 +339,14 @@ app.put('/api/users_workout/:id', async(req, res) => {
 
 app.delete('/api/users_workout/:id', async(req, res) => {
     try{ 
-        let id = parseInt(req.params.id);
-        let result = await pool.query('DELETE FROM users_workout WHERE id = $1 RETURNING *', [id]);
+        const userId = parseInt(req.params.id);
+        const workoutName = req.body.workout_name
+
+        const workoutToDelete = await pool.query('SELECT * FROM users_workout WHERE user_id = 1 AND workout_name = $2', [userId, workoutName]);
+        if(workoutToDelete.rows.length === 0) {
+            return res.status(400).json({error: "workout not found"})
+        }
+        const result = await pool.query('DELETE FROM users_workout WHERE id = $1 RETURNING *', [workoutToDelete.rows[0].id]);
         res.status(200).send(result.rows[0])
     }catch(error) {
         console.log(error.stack);
