@@ -32,15 +32,38 @@ homeButton.textContent = 'Home'
 homeButton.style.width = '100px'
 buttonContainer.appendChild(homeButton)
 homeButton.addEventListener('click', () => {
-    $(mainContainer).show();
-    $(pushButton).show();
-    $(pullButton).show();
-    $(legsButton).show();
+    $(mainContainer).hide();
+    $(mainContainer).fadeIn(1000)
+    $(pushButton).hide();
+    $(pushButton).fadeIn(2000);
+    $(pullButton).hide();
+    $(pullButton).fadeIn(3000);
+    $(legsButton).hide();
+    $(legsButton).fadeIn(4000);
     $(workoutContainer).hide();
     $(workoutContainer).empty();
     $(createWorkoutContainer).hide();
     $(loginContainer).hide();
 })
+//need to finish this function when login feature is working
+const getUsersWorkouts = async() => {
+try {
+let response = await fetch('http://localhost:3000/api/users_workout/:id');
+const data = await response.json();
+console.log(data)
+
+}catch(error) {
+
+}
+}
+
+let myWorkoutButton = document.createElement('button');
+myWorkoutButton.textContent = 'My Workouts';
+buttonContainer.appendChild(myWorkoutButton);
+
+myWorkoutButton.addEventListener('click', getUsersWorkouts )
+
+
 
 
 
@@ -67,11 +90,13 @@ let userNameInput = document.createElement('input')
 // userNameInput.type = 'text';
 userNameInput.placeholder = 'Username'
 userNameInput.id = "userName"
+userNameInput.type = 'text'
 form.appendChild(userNameInput);
 
 let passwordInput = document.createElement('input');
 passwordInput.placeholder = 'Password'
 passwordInput.id = 'password'
+passwordInput.type = 'text'
 form.appendChild(passwordInput);
 
 let loginButton = document.createElement('button');
@@ -81,6 +106,31 @@ form.appendChild(loginButton);
 let registerButton = document.createElement('button');
 registerButton.textContent = 'Register';
 form.appendChild(registerButton);
+
+registerButton.addEventListener('click', async() => {
+    let userName = document.getElementById('userName').value;
+    let password = document.getElementById('password').value;
+    try{
+        let response = await fetch('http://localhost:3000/api/users/register', {
+            method: "POST",
+            body: JSON.stringify({
+                users_name: userName,
+                users_password: password
+            }), headers: {
+                "Content-Type": 'application/json; charset=UTF-8'
+            }
+        });
+        if(response.ok) {
+            let resData = await response.json();
+            console.log('Registration successful', resData);
+        } else {
+            console.log('Registration unsuccessful');
+        }
+    }catch(error) {
+    console.log(error.stack)
+    }
+})
+
 
 loginButton.addEventListener('click', async() => {
 let userName = document.getElementById('userName').value;
@@ -106,29 +156,7 @@ console.log(error.stack);
 }
 })
 
-registerButton.addEventListener('click', async() => {
-    let userName = document.getElementById('userName').value;
-    let password = document.getElementById('password').value;
-    try{
-        let response = await fetch('http://localhost:3000/api/users/register', {
-            method: "POST",
-            body: JSON.stringify({
-                users_name: userName,
-                users_password: password
-            }), headers: {
-                "Content-Type": 'application/json; charset=UTF-8'
-            }
-        });
-        if(response.ok) {
-            let resData = await response.json();
-            console.log('Registration successful', resData);
-        } else {
-            console.log('Registration unsuccessful');
-        }
-    }catch(error) {
-    console.log(error.stack)
-    }
-})
+
 
 let createWorkoutContainer = document.createElement('div');
 createWorkoutContainer.style.height = '75vh';
@@ -160,41 +188,48 @@ submitButton.textContent = 'Submit';
 createWorkoutContainer.appendChild(submitButton);
 
 
-let userWorkoutContainer = document.createElement('div');
-userWorkoutContainer.style.height = '75vh';
-userWorkoutContainer.style.width = '98.2vw';
-userWorkoutContainer.style.backgroundColor = 'yellow';
-body.appendChild(userWorkoutContainer);
-$(userWorkoutContainer).hide();
+let addExerciseContainer = document.createElement('div');
+addExerciseContainer.style.display = 'flex'
+addExerciseContainer.style.flexDirection = 'column'
+addExerciseContainer.style.height = '75vh';
+addExerciseContainer.style.width = '98.2vw';
+addExerciseContainer.style.backgroundColor = 'yellow';
+body.appendChild(addExerciseContainer);
+$(addExerciseContainer).hide();
 
 let exerciseLabel = document.createElement('label');
 exerciseLabel.textContent = 'exercise name';
-userWorkoutContainer.appendChild(exerciseLabel);
+addExerciseContainer.appendChild(exerciseLabel);
 let exerciseInput = document.createElement('input');
+exerciseInput.style.width = '10%'
 exerciseInput.id = 'exercise'
-userWorkoutContainer.appendChild(exerciseInput);
+addExerciseContainer.appendChild(exerciseInput);
 
 
 let setsLabel = document.createElement('label');
 setsLabel.textContent = 'sets';
-userWorkoutContainer.appendChild(setsLabel);
+addExerciseContainer.appendChild(setsLabel);
 let setsInput = document.createElement('input');
 setsInput.id = 'sets'
-userWorkoutContainer.appendChild(setsInput);
+setsInput.style.width = '10%'
+addExerciseContainer.appendChild(setsInput);
 
 let repsLabel = document.createElement('label');
 repsLabel.textContent = 'reps';
-userWorkoutContainer.appendChild(repsLabel);
+addExerciseContainer.appendChild(repsLabel);
 let repsInput = document.createElement('input');
 repsInput.id = 'reps'
-userWorkoutContainer.appendChild(repsInput);
+repsInput.style.width = '10%'
+addExerciseContainer.appendChild(repsInput);
 
 let addExerciseButton = document.createElement('button');
 addExerciseButton.textContent = 'Add Exercise';
-userWorkoutContainer.appendChild(addExerciseButton);
+addExerciseButton.style.width = "10%"
+addExerciseContainer.appendChild(addExerciseButton);
 
 addExerciseButton.addEventListener('click', async() => {
 try {
+    let nameValue = document.getElementById('userNameInput').value;
     let exerciseValue = document.getElementById('exercise').value;
     let setsValue = document.getElementById('sets').value;
     let repsValue = document.getElementById('reps').value;
@@ -212,6 +247,7 @@ try {
     if(response.ok) {
         let resData = await response.json();
         console.log('exercise added', resData)
+        alert(`${exerciseValue}, sets:${setsValue}, reps:${repsValue} was added to ${nameValue}`)
     } else {
         console.log('exercise was not added')
     }
@@ -235,6 +271,7 @@ try{
     if(response.ok) {
         let resData = await response.json();
         console.log("Workout name added", resData)
+        alert(`${nameValue} added`)
     } else {
         console.log('Workout name was not added')
     }
@@ -244,19 +281,22 @@ try{
 })
 
 submitButton.addEventListener('click', () => {
-    $(userWorkoutContainer).show()
+    $(addExerciseContainer).hide();
+    $(addExerciseContainer).fadeIn(2000);
     $(mainContainer).hide()
     $(createWorkoutContainer).hide();
 })
 
-let createButton = document.createElement('button');
-createButton.textContent = 'Create Workout';
-buttonContainer.appendChild(createButton)
-createButton.addEventListener('click', () => {
+let createWorkoutButton = document.createElement('button');
+createWorkoutButton.textContent = 'Create Workout';
+buttonContainer.appendChild(createWorkoutButton)
+createWorkoutButton.addEventListener('click', () => {
     $(mainContainer).hide();
     $(workoutContainer).hide();
     $(workoutContainer).empty();
-    $(createWorkoutContainer).show();
+    $(createWorkoutContainer).hide();
+    $(createWorkoutContainer).fadeIn(1000);
+    $(loginContainer).hide();
 })
 
 

@@ -16,14 +16,14 @@ CREATE TABLE exercises(
 
 CREATE TABLE users (
     id SERIAL PRIMARY KEY NOT NULL,
-    users_name VARCHAR(50),
-    users_password VARCHAR(50)
+    users_name VARCHAR(500) NOT NULL,
+    users_password VARCHAR(500) NOT NULL
 );
 
 CREATE TABLE users_workout(
     id SERIAL PRIMARY KEY NOT NULL,
-    workout_name TEXT
-    user_id INTEGER REFERENCES users(id);
+    workout_name TEXT,
+    user_id INTEGER REFERENCES users(id)
 );
 
 CREATE TABLE all_exercises(

@@ -4,7 +4,7 @@ const dotenv = require('dotenv')
 dotenv.config();
 const {Pool} = require('pg')
 const cors = require('cors');
-const bcrypt = require('bcrypt')
+// const bcrypt = require('bcrypt')
 const pool = new Pool ({
     host: 'localhost',
     user: 'postgres',
@@ -21,6 +21,50 @@ app.use(cors())
 app.use(express.json())
 app.use(express.static('Public'))
 
+
+
+//routes for login/register
+app.post('/api/users/register', async(req, res) => {
+    const {username, password} = req.body;
+ 
+    try {
+        const existingUser = await pool.query('SELECT * FROM users WHERE users_name = $1', [username]);
+        if(existingUser.rows.length > 0) {
+            return res.status(400).json({error: 'Username already exists'});
+        }
+    //    const hashPassword = await bcrypt.hash(password, 10);
+        const result = await pool.query('INSERT INTO users(users_name, users_password) VALUES ($1, $2) RETURNING *', [username, password]);
+        const newUser = result.rows[0];
+        console.log(newUser)
+        res.status(200).json(newUser)
+    }catch(error) {
+        console.log(error.stack);
+        res.status(500).json({error: 'Internal Server Error'})
+    }
+})
+
+app.post('/api/users/login', async(req, res) => {
+     const {username, password} = req.body;
+    try {
+       const result = await pool.query('SELECT * FROM users WHERE users_name = $1', [username]);
+        if(result.rows.length > 0) {
+            const user = result.rows[0];
+            const passwordCheck = await bcrypt.compare(password, user.users_password);
+            
+            if(passwordCheck) {
+                res.status(200).json({message: 'Login Succesful'});
+            } else {
+                res.status(400).json({message: 'Invalid Password'});
+            }
+        } else {
+            res.status(400).json({message: 'Invalid User'})
+        }
+
+    }catch(error) {
+        console.log(error.stack);
+        res.status(500).json({error: 'Internal Server Error'})
+    }
+});
 //Routes for workouts table
 app.get('/api/workouts', async(req,res) => {
     try{
@@ -163,47 +207,6 @@ app.delete('/api/exercises/:id', async(req, res) => {
     }
 })
 
-//Routes for users
-app.post('/api/users/register', async(req, res) => {
-    const {username, password} = req.body;
-
-    try {
-        const existingUser = await pool.query('SELECT * FROM users WHERE users_name -$1', [username]);
-        if(existingUser.rows.length > 0) {
-            return res.status(400).json({error: 'Username already exists'});
-        }
-        const hashPassword = await bcrypt.hash(password, 10);
-        const result = await pool.query('INSERT INTO users(users_name, users_password) VALUES ($1, $2) RETURNING *', [username, hashPassword]);
-        const newUser = result.rows[0];
-        res.status(200).json(newUser)
-    }catch(error) {
-        console.log(error.stack);
-        res.status(500).json({error: 'Internal Server Error'})
-    }
-})
-
-app.post('/api/users/login', async(req, res) => {
-     const {username, password} = req.body;
-    try {
-       const result = await pool.query('SELECT * FROM users WHERE users_name = $1', [username]);
-        if(result.rows.length > 0) {
-            const user = result.rows[0];
-            const passwordCheck = await bcrypt.compare(password, user, users_password);
-            
-            if(passwordCheck) {
-                res.status(200).json({message: 'Login Succesful'});
-            } else {
-                res.status(400).json({message: 'Invalid Password'});
-            }
-        } else {
-            res.status(400).json({message: 'Invalid User'})
-        }
-
-    }catch(error) {
-        console.log(error.stack);
-        res.status(500).json({error: 'Internal Server Error'})
-    }
-});
 
 //Routes for users_workout table
 app.get('/api/users_workout', async(req,res) => {
