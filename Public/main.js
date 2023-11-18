@@ -108,11 +108,11 @@ form.style.gap = '10px';
 loginContainer.appendChild(form)
 
 let userNameInput = document.createElement('input')
-// userNameInput.type = 'text';
 userNameInput.placeholder = 'Username'
 userNameInput.id = "userName"
 userNameInput.type = 'text'
 userNameInput.style.borderRadius = '5px'
+userNameInput.name = 'userName'
 form.appendChild(userNameInput);
 
 let passwordInput = document.createElement('input');
@@ -120,6 +120,7 @@ passwordInput.placeholder = 'Password'
 passwordInput.id = 'password'
 passwordInput.type = 'text'
 passwordInput.style.borderRadius = '5px'
+passwordInput.name = 'password'
 form.appendChild(passwordInput);
 
 let loginButton = document.createElement('button');
@@ -130,11 +131,15 @@ form.appendChild(loginButton);
 let registerButton = document.createElement('button');
 registerButton.textContent = 'Register';
 registerButton.className = 'rounded-button'
+registerButton.type = 'submit';
 form.appendChild(registerButton);
 
-registerButton.addEventListener('click', async() => {
-    let userName = document.getElementById('userName').value;
-    let password = document.getElementById('password').value;
+registerButton.addEventListener('click', async(e) => {
+    let userName = document.getElementById('userName').target.value;
+    let password = document.getElementById('password').target.value;
+    console.log(userName);
+    console.log(password);
+    console.log(e.target.value);
     try{
         let response = await fetch('http://localhost:3000/api/users/register', {
             method: "POST",
@@ -145,6 +150,7 @@ registerButton.addEventListener('click', async() => {
                 "Content-Type": 'application/json; charset=UTF-8'
             }
         });
+        console.log(body);
         if(response.ok) {
             let resData = await response.json();
             console.log('Registration successful', resData);
@@ -218,6 +224,14 @@ let deleteWorkoutButton = document.createElement('button');
 deleteWorkoutButton.textContent = 'Delete Workout';
 deleteWorkoutButton.className = 'rounded-button'
 createWorkoutContainer.appendChild(deleteWorkoutButton)
+
+// deleteWorkoutButton.addEventListener('click', () => {
+//     try {
+//         const response = await fetch('http://localhost:3000/api/users_workout/:id')
+//     }catch(error) {
+
+//     }
+// })
 
 
 let addExerciseContainer = document.createElement('div');
