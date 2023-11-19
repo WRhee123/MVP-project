@@ -294,11 +294,11 @@ app.get('/api/users_workout/:id', async(req, res) => {
         if(isNaN(id) || id < 0) {
             return res.status(400).json({error: 'Invalid ID'})
         } else {
-            let result = await pool.query('SELECT * FROM users_workout WHERE id = $1', [id]);
+            let result = await pool.query('SELECT * FROM users_workout WHERE user_id = $1', [id]);
             if(result.rows.length === 0) {
                return res.status(400).json({error: 'Not Found'})
             }
-           return res.status(200).send(result.rows[0])
+           return res.status(200).send(result.rows)
         }
     }catch(error) {
         console.log(error.stack);
