@@ -308,11 +308,13 @@ app.get('/api/users_workout/:id', async(req, res) => {
 
 app.post('/api/users_workout', async(req, res) => {
     try{
-        const {workout_name} = req.body;
+        const {workout_name, user_id} = req.body;
         let result = await pool.query(
-            'INSERT INTO users_workout (workout_name) VALUES ($1) RETURNING *', [workout_name]
+            'INSERT INTO users_workout (workout_name, user_id) VALUES ($1, $2) RETURNING *', [workout_name, user_id]
             );
-        res.send(result.rows[0])
+        const workout = result.rows[0]
+        res.send(workout);
+
     } catch(error) {
         console.log(error.stack);
         res.status(500).json({error: "Internal Server Error"})
@@ -411,9 +413,9 @@ app.get('/api/all_exercises/:id', async(req, res) => {
 
 app.post('/api/all_exercises', async(req, res) => {
     try{
-        const {exercise, set_number, reps, difficulty, users_id} = req.body;
+        const {exercise, set_number, reps, workoutId} = req.body;
         let result = await pool.query(
-            'INSERT INTO all_exercises (exercise, set_number, reps, difficulty, users_id) VALUES ($1, $2, $3, $4, $5) RETURNING *', [exercise, set_number, reps, difficulty, users_id]
+            'INSERT INTO all_exercises (exercise, set_number, reps, users_id) VALUES ($1, $2, $3, $4) RETURNING *', [exercise, set_number, reps, workoutId]
             );
         res.send(result.rows[0])
     } catch(error) {

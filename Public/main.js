@@ -121,7 +121,7 @@ form.appendChild(userNameInput);
 let passwordInput = document.createElement('input');
 passwordInput.placeholder = 'Password'
 passwordInput.id = 'password'
-passwordInput.type = 'text'
+passwordInput.type = 'password'
 passwordInput.style.borderRadius = '5px'
 passwordInput.name = 'password'
 form.appendChild(passwordInput);
@@ -188,6 +188,9 @@ console.log(password);
         let userId = result.user.id;
         localStorage.setItem('userId', userId);
         console.log('login successful', result);
+        $(loginContainer).hide()
+        $(mainContainer).fadeIn(1000)
+        
     } else {
         console.log('login failed');
     }
@@ -195,7 +198,6 @@ console.log(password);
 console.log(error.stack);
 }
 });
-
 
 
 let createWorkoutContainer = document.createElement('div');
@@ -223,6 +225,11 @@ workoutNameInput.style.width = '50px;'
 workoutNameInput.id = 'workoutName'
 workoutNameInput.type = 'text'
 createWorkoutContainer.appendChild(workoutNameInput);
+
+let userIdInput = document.createElement('input');
+userIdInput.id = 'userIdInput';
+userIdInput.type = 'hidden';
+createWorkoutContainer.appendChild(userIdInput);
 
 let submitButton = document.createElement('button');
 submitButton.textContent = 'Submit';
@@ -304,18 +311,26 @@ addExerciseButton.style.width = "10%"
 addExerciseButton.className = 'rounded-button'
 addExerciseContainer.appendChild(addExerciseButton);
 
+let workoutIdInput = document.createElement('input');
+workoutIdInput.type = 'hidden';
+workoutIdInput.id = 'workoutIdInput'
+addExerciseContainer.appendChild(workoutIdInput);
+
+
 addExerciseButton.addEventListener('click', async() => {
 try {
-    let nameValue = document.getElementById('userNameInput').value;
+    // let nameValue = document.getElementById('userNameInput').value;
     let exerciseValue = document.getElementById('exercise').value;
     let setsValue = document.getElementById('sets').value;
     let repsValue = document.getElementById('reps').value;
+    let workoutIdInput = localStorage.getItem('workoutId')
     let response = await fetch('http://localhost:3000/api/all_exercises', {
         method: 'POST',
         body:JSON.stringify({
             exercise: exerciseValue,
             set_number: setsValue,
-            reps: repsValue
+            reps: repsValue,
+            workoutId: workoutIdInput
         }),
         headers: {
             "Content-Type": 'application/json; charset=UTF-8'
@@ -323,6 +338,7 @@ try {
     });
     if(response.ok) {
         let resData = await response.json();
+        
         console.log('exercise added', resData)
         alert(`${exerciseValue}, sets:${setsValue}, reps:${repsValue} was added to ${nameValue}`)
     } else {
@@ -335,11 +351,14 @@ console.log(error.stack)
 
 submitButton.addEventListener('click', async() => {
 try{
-    let nameValue = document.getElementById('userNameInput').value;
+    let nameValue = document.getElementById('workoutName').value;
+    let userIdInput = localStorage.getItem('userId')
+    console.log(userIdInput);
     let response = await fetch('http://localhost:3000/api/users_workout', {
         method: "POST",
         body:JSON.stringify({
-            workout_name: nameValue
+            workout_name: nameValue,
+            user_id: userIdInput
         }),
         headers: {
             "Content-Type": "application/json; charset=UTF-8"
@@ -347,6 +366,8 @@ try{
     });
     if(response.ok) {
         let resData = await response.json();
+        let workoutId = resData.id;
+        localStorage.setItem('workoutId', workoutId)
         console.log("Workout name added", resData)
         alert(`${nameValue} added`)
     } else {
@@ -404,7 +425,7 @@ workoutContainer.style.backgroundColor = 'red';
 body.appendChild(workoutContainer);
 $(workoutContainer).hide();
 
-// homePage();
+homePage();
 
     async function homePage() {
         const response = await fetch('http://localhost:3000/api/workouts');
