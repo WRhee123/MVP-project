@@ -4,7 +4,7 @@ const dotenv = require('dotenv')
 dotenv.config();
 const {Pool} = require('pg')
 const cors = require('cors');
-// const bcrypt = require('bcrypt')
+const bcrypt = require('bcrypt')
 const pool = new Pool ({
     host: 'localhost',
     user: 'postgres',
@@ -32,8 +32,8 @@ app.post('/api/users/register', async(req, res) => {
         if(existingUser.rows.length > 0) {
             return res.status(400).json({error: 'Username already exists'});
         }
-    //    const hashPassword = await bcrypt.hash(password, 10);
-        const result = await pool.query('INSERT INTO users(users_name, users_password) VALUES ($1, $2) RETURNING *', [users_name, users_password]);
+       const hashPassword = await bcrypt.hash(users_password, 10);
+        const result = await pool.query('INSERT INTO users(users_name, users_password) VALUES ($1, $2) RETURNING *', [users_name, hashPassword]);
         const newUser = result.rows[0];
         console.log(newUser)
         res.status(200).json(newUser)
@@ -44,15 +44,14 @@ app.post('/api/users/register', async(req, res) => {
 })
 
 app.post('/api/users/login', async(req, res) => {
-     const {users_name, users_password} = req.body;
+     const {userName, password} = req.body;
     try {
-       const result = await pool.query('SELECT * FROM users WHERE users_name = $1', [users_name]);
+       const result = await pool.query('SELECT * FROM users WHERE users_name = $1', [userName]);
         if(result.rows.length > 0) {
             const user = result.rows[0];
-            const passwordCheck = await bcrypt.compare(users_password, user.users_password);
-            
+            const passwordCheck = await bcrypt.compare(password, user.users_password);
             if(passwordCheck) {
-                res.status(200).json({message: 'Login Succesful'});
+                res.status(200).json({user, success: true, message: 'Login Successful'});
             } else {
                 res.status(400).json({message: 'Invalid Password'});
             }
@@ -205,6 +204,7 @@ app.delete('/api/workouts/:id', async(req, res) => {
     }
 })
 
+
 //Routes for exercises table
 app.get('/api/exercises', async(req,res) => {
     try{
@@ -353,6 +353,32 @@ app.delete('/api/users_workout/:id', async(req, res) => {
         res.status(500).json({error: "Internal Server Error"})
     }
 })
+// app.delete('/api/workouts/:name', async (req, res) => {
+//     try {
+//         const workoutName = req.params.name;
+//         const userId = req.body.userId; // Assuming userId is sent in the request body
+
+//         if (!workoutName || workoutName.trim() === "" || !userId) {
+//             return res.status(400).json({ error: 'Invalid workout name or userId' });
+//         }
+
+//         // Check if the user has permission to delete the workout (Optional)
+//         // You may want to check if the user making the request owns the workout, etc.
+
+//         const result = await pool.query('DELETE FROM workouts WHERE workout_name = $1 AND user_id = $2 RETURNING *', [workoutName, userId]);
+
+//         if (result.rows.length === 0) {
+//             return res.status(400).json({ error: 'Workout not found or user does not have permission to delete' });
+//         }
+
+//         return res.status(200).json({ message: 'Workout deleted successfully', deletedWorkout: result.rows[0] });
+//     } catch (error) {
+//         console.log(error.stack);
+//         return res.status(500).json({ error: 'Internal Server Error' });
+//     }
+// });
+
+
 
 //Routes for all_exercises table
 app.get('/api/all_exercises', async(req,res) => {

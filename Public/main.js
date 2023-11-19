@@ -1,27 +1,26 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // const baseURL = 'http://localhost:3000/api/workouts'
     let body = document.getElementsByTagName('body')[0];
-    body.style.backgroundColor = '#000000'
+    body.style.backgroundColor = '#000000';
 
 const createTitleContainer =() => {let titleContainer = document.createElement('div');
-titleContainer.style.display = 'flex'
-titleContainer.style.alignItems = 'center'
+titleContainer.style.display = 'flex';
+titleContainer.style.alignItems = 'center';
 titleContainer.style.justifyContent = 'center';
 titleContainer.style.backgroundColor = 'gray';
 titleContainer.style.height = '20vh';
 titleContainer.style.width = '98vw';
 // titleContainer.textContent = 'MVP Fitness';
 titleContainer.style.textAlign = 'center';
-titleContainer.style.fontSize = '100px'
+titleContainer.style.fontSize = '100px';
  // Create a span element for italic styling
  let titleSpan = document.createElement('span');
  titleSpan.textContent = 'MVP ';
- titleSpan.style.color = '#E5E5E5'
+ titleSpan.style.color = '#E5E5E5';
 
  // Create a span element for the non-italic part
  let fitnessSpan = document.createElement('span');
  fitnessSpan.style.fontStyle = 'italic';
- fitnessSpan.style.color = '#FCA311'
+ fitnessSpan.style.color = '#FCA311';
  fitnessSpan.textContent = 'Fitness';
 
  // Append both spans to the title container
@@ -38,17 +37,17 @@ let buttonContainer = document.createElement('div');
 buttonContainer.style.height = '5vh';
 buttonContainer.style.width = '98vw';
 buttonContainer.style.backgroundColor = 'black';
-buttonContainer.style.display = 'flex'
-buttonContainer.style.gap = '20px'
+buttonContainer.style.display = 'flex';
+buttonContainer.style.gap = '20px';
 body.appendChild(buttonContainer);
 
 
 
 let homeButton = document.createElement('button');
-homeButton.textContent = 'Home'
-homeButton.style.width = '100px'
-homeButton.className = 'rounded-button'
-buttonContainer.appendChild(homeButton)
+homeButton.textContent = 'Home';
+homeButton.style.width = '100px';
+homeButton.className = 'rounded-button';
+buttonContainer.appendChild(homeButton);
 homeButton.addEventListener('click', () => {
     $(mainContainer).hide();
     $(mainContainer).fadeIn(1000)
@@ -134,7 +133,7 @@ registerButton.className = 'rounded-button'
 registerButton.type = 'submit';
 form.appendChild(registerButton);
 
-registerButton.addEventListener('click', async(e) => {
+registerButton.addEventListener('click', async() => {
    
     try{
          let userName = document.getElementById('userName').value;
@@ -164,28 +163,34 @@ registerButton.addEventListener('click', async(e) => {
 
 
 loginButton.addEventListener('click', async() => {
-let userName = document.getElementById('userName').value;
-let password = document.getElementById('password').value;
 try{
-    let response = await fetch('http://localhost:3000/api/users/login', {
+    let userName = document.getElementById('userName').value;
+let password = document.getElementById('password').value;
+console.log(userName);
+console.log(password);
+    const response = await fetch('http://localhost:3000/api/users/login', {
         method: 'POST',
-        body: JSON.stringify({
-            users_name: userName,
-            users_password: password
-        }), headers: {
-            "Content-Type": 'application/json; charset=UTF-8'
-        }
+        headers: {
+            "Content-Type": 'application/json'
+        },
+         body: JSON.stringify({
+        userName,
+        password
+        })
     });
-    if(response.ok) {
-        let resData = await response.json();
-        console.log('login successful', resData)
+    const result = await response.json();
+    console.log(result)
+    if(response.ok && result.success) {
+        let userId = result.users.id;
+        localStorage.setItem('userId', userId);
+        console.log('login successful', result);
     } else {
-        console.log('login unsuccessful')
+        console.log('login failed');
     }
 }catch(error) {
 console.log(error.stack);
 }
-})
+});
 
 
 
@@ -230,7 +235,8 @@ createWorkoutContainer.appendChild(deleteWorkoutButton)
 deleteWorkoutButton.addEventListener('click', async() => {
     try {
         const workoutNameToDelete = document.getElementById('workoutName').value;
-        const response = await fetch('http://localhost:3000/api/users_workout/:${userId}', {
+        const userId = localStorage.getItem('userId')
+        const response = await fetch('http://localhost:3000/api/users_workout/:${workoutNameToDelete}', {
             method: "DELETE",
             header: {
                 'Content-Type': 'application/json',
@@ -394,7 +400,7 @@ workoutContainer.style.backgroundColor = 'red';
 body.appendChild(workoutContainer);
 $(workoutContainer).hide();
 
-    homePage();
+// homePage();
 
     async function homePage() {
         const response = await fetch('http://localhost:3000/api/workouts');
