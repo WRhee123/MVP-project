@@ -341,14 +341,13 @@ app.put('/api/users_workout/:id', async(req, res) => {
 
 app.delete('/api/users_workout/:id', async(req, res) => {
     try{ 
-        const userId = parseInt(req.params.id);
-        const workoutName = req.body.workout_name
+        const {user_id, workout_name} = req.body
 
-        const workoutToDelete = await pool.query('SELECT * FROM users_workout WHERE user_id = 1 AND workout_name = $2', [userId, workoutName]);
+        const workoutToDelete = await pool.query('SELECT * FROM users_workout WHERE user_id = $1 AND workout_name = $2', [user_id, workout_name]);
         if(workoutToDelete.rows.length === 0) {
             return res.status(400).json({error: "workout not found"})
         }
-        const result = await pool.query('DELETE FROM users_workout WHERE id = $1 RETURNING *', [workoutToDelete.rows[0].id]);
+        const result = await pool.query('DELETE FROM users_workout WHERE user_id = $1 AND workout_name = $2 RETURNING *', [user_id, workout_name]);
         res.status(200).send(result.rows[0])
     }catch(error) {
         console.log(error.stack);
