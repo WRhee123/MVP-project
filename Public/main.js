@@ -105,6 +105,10 @@ form.style.alignItems = 'center'
 form.style.justifyContent = 'center'
 form.style.gap = '10px';
 loginContainer.appendChild(form)
+form.addEventListener('submit', function (event) {
+    event.preventDefault(); // Prevents the default form submission
+    // Your form handling logic here
+});
 
 let userNameInput = document.createElement('input')
 userNameInput.placeholder = 'Username'
@@ -181,7 +185,7 @@ console.log(password);
     const result = await response.json();
     console.log(result)
     if(response.ok && result.success) {
-        let userId = result.users.id;
+        let userId = result.user.id;
         localStorage.setItem('userId', userId);
         console.log('login successful', result);
     } else {
