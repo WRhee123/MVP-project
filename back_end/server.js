@@ -35,7 +35,7 @@ app.post('/api/users/register', async(req, res) => {
        const hashPassword = await bcrypt.hash(users_password, 10);
         const result = await pool.query('INSERT INTO users(users_name, users_password) VALUES ($1, $2) RETURNING *', [users_name, hashPassword]);
         const newUser = result.rows[0];
-        console.log(newUser)
+       
         res.status(200).json(newUser)
     }catch(error) {
         console.log(error.stack);

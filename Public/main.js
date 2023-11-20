@@ -329,7 +329,6 @@ registerButton.addEventListener('click', async() => {
          let userName = document.getElementById('userName').value;
     let password = document.getElementById('password').value;
     console.log(userName);
-    console.log(password);
         let response = await fetch('http://localhost:3000/api/users/register', {
             method: "POST",
             body: JSON.stringify({
@@ -339,7 +338,7 @@ registerButton.addEventListener('click', async() => {
                 "Content-Type": 'application/json; charset=UTF-8'
             }
         });
-        console.log(await response.json());
+        
         if(response.ok) {
             let resData = await response.json();
             console.log('Registration successful', resData);
@@ -357,7 +356,7 @@ try{
     let userName = document.getElementById('userName').value;
 let password = document.getElementById('password').value;
 console.log(userName);
-console.log(password);
+
     const response = await fetch('http://localhost:3000/api/users/login', {
         method: 'POST',
         headers: {
@@ -369,7 +368,7 @@ console.log(password);
         })
     });
     const result = await response.json();
-    console.log(result)
+    
     if(response.ok && result.success) {
         let userId = result.user.id;
         localStorage.setItem('userId', userId);
