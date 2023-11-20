@@ -291,6 +291,7 @@ form.style.alignItems = 'center';
 form.style.justifyContent = 'center';
 form.style.gap = '10px';
 loginContainer.appendChild(form);
+
 form.addEventListener('submit', function (event) {
     event.preventDefault(); // Prevents the default form submission
     // Your form handling logic here
