@@ -343,6 +343,7 @@ registerButton.addEventListener('click', async() => {
         if(response.ok) {
             let resData = await response.json();
             console.log('Registration successful', resData);
+            alert('Registration successful!')
         } else {
             console.log('Registration unsuccessful');
         }
