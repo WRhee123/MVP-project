@@ -189,15 +189,15 @@ data.forEach((workout) => {
                     $(editContainer).hide();
                     let editExerciseNameInput = document.createElement('input');
                    editExerciseNameInput.placeholder = 'exercise name';
-                   editExerciseNameInput.id = 'editExerciseNameInput';
+                //    editExerciseNameInput.id = 'editExerciseNameInput';
                    editContainer.appendChild(editExerciseNameInput);
                    let editSetsInput = document.createElement('input');
                    editSetsInput.placeholder = 'sets';
-                   editSetsInput.id = 'editSetsInput';
+                //    editSetsInput.id = 'editSetsInput';
                    editContainer.appendChild(editSetsInput);
                    let editRepsInput = document.createElement('input');
                    editRepsInput.placeholder = 'reps';
-                   editRepsInput.id = 'editRepsInput'
+                //    editRepsInput.id = 'editRepsInput'
                    editContainer.appendChild(editRepsInput);
                     let submitChangesButton = document.createElement('button');
                     submitChangesButton.className = 'rounded-button';
@@ -215,9 +215,9 @@ data.forEach((workout) => {
                     localStorage.setItem('exerciseId', exerciseId)
                     let workoutId = localStorage.getItem('workoutId')
                     console.log(exerciseId)
-                    let exerciseNameValue = document.getElementById('editExerciseNameInput').value;
-                    let setsValue = document.getElementById('editSetsInput').value;
-                    let repsValue = document.getElementById('editRepsInput').value
+                    let exerciseNameValue = editExerciseNameInput.value;
+                    let setsValue = editSetsInput.value;
+                    let repsValue = editRepsInput.value
                     try{
                         let response = await fetch(`http://localhost:3000/api/all_exercises/${exerciseId}`, {
                             method: "PUT",
