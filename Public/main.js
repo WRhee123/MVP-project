@@ -378,6 +378,7 @@ console.log(userName);
         
     } else {
         console.log('login failed');
+        alert('login failed')
     }
 }catch(error) {
 console.log(error.stack);
