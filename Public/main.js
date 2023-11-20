@@ -235,8 +235,10 @@ data.forEach((workout) => {
                         if(response.ok) {
                             let resData = await response.json();
                             console.log('exercise was edited', resData);
+                            alert('exercise was edited')
                         } else {
                             console.log('exercise failed to edit')
+                            alert('exercise failed to edit')
                         }
                     }catch(error) {
                         console.log(error.stack)
@@ -467,6 +469,7 @@ $(addExerciseContainer).hide();
 
 let exerciseLabel = document.createElement('label');
 exerciseLabel.textContent = 'exercise name';
+exerciseLabel.style.backgroundColor = '#E5E5E5'
 addExerciseContainer.appendChild(exerciseLabel);
 let exerciseInput = document.createElement('input');
 exerciseInput.style.borderRadius = '5px';
@@ -477,6 +480,7 @@ addExerciseContainer.appendChild(exerciseInput);
 
 let setsLabel = document.createElement('label');
 setsLabel.textContent = 'sets';
+setsLabel.style.color = '#E5E5E5'
 addExerciseContainer.appendChild(setsLabel);
 let setsInput = document.createElement('input');
 setsInput.style.borderRadius = '5px';
@@ -486,6 +490,7 @@ addExerciseContainer.appendChild(setsInput);
 
 let repsLabel = document.createElement('label');
 repsLabel.textContent = 'reps';
+repsLabel.style.color = '#E5E5E5'
 addExerciseContainer.appendChild(repsLabel);
 let repsInput = document.createElement('input');
 repsInput.style.borderRadius = '5px';
