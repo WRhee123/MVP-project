@@ -426,9 +426,9 @@ app.post('/api/all_exercises', async(req, res) => {
 app.put('/api/all_exercises/:id', async(req, res) => {
     try{ 
         const id = parseInt(req.params.id);
-    const {exercise, set_number, reps, difficulty, users_id} = req.body;
+    const {exercise, set_number, reps, users_id} = req.body;
     const result = await pool.query(
-        'UPDATE all_exercises SET exercise = $1, set_number = $2, reps = $3, difficulty = $4, users_id = $5 WHERE id = $6 RETURNING *', [exercise, set_number, reps, difficulty, users_id, id]
+        'UPDATE all_exercises SET exercise = $1, set_number = $2, reps = $3, users_id = $4 WHERE id = $5 RETURNING *', [exercise, set_number, reps, users_id, id]
         );
         console.log(result.rows)
     if(result.rows.length === 0) {

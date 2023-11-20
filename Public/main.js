@@ -173,6 +173,51 @@ data.forEach((workout) => {
                         console.log(error.stack)
                     }
                 })
+                //create a edit button and add put route
+                let editExerciseButton = document.createElement('button');
+                editExerciseButton.textContent = "edit";
+                editExerciseButton.className = 'rounded-button';
+                exerciseDiv.appendChild(editExerciseButton);
+                
+                let editContainer = document.createElement('div');
+                    editContainer.style.height = '25vh';
+                    editContainer.style.width = '15vw';
+                    editContainer.id = 'editContainer';
+                    editContainer.style.backgroundColor = '#E5E5E5'
+                    editContainer.style.marginTop = '10px'
+                    exerciseDiv.appendChild(editContainer);
+                    $(editContainer).hide();
+                    let editExerciseNameInput = document.createElement('input');
+                   editExerciseNameInput.placeholder = 'exercise name';
+                   editContainer.appendChild(editExerciseNameInput)
+                   let editSetsInput = document.createElement('input');
+                   editSetsInput.placeholder = 'sets';
+                   editContainer.appendChild(editSetsInput);
+                   let editRepsInput = document.createElement('input');
+                   editRepsInput.placeholder = 'reps';
+                   editContainer.appendChild(editRepsInput);
+                    let submitChangesButton = document.createElement('button');
+                    submitChangesButton.className = 'rounded-button';
+                    submitChangesButton.textContent = 'submit changes';
+                    editContainer.appendChild(submitChangesButton);
+                   editExerciseButton.addEventListener('click', () => {
+                   $(editContainer).toggle();
+                })
+                
+                // editExerciseButton.addEventListener('click', async(e) => {
+                //     let exerciseId = exercise.id
+                //     localStorage.setItem('exerciseId', exerciseId)
+                //     console.log(exerciseId)
+                //     try{
+                       
+                //         let response = await fetch(`http://localhost:3000/api/all_exercises/${exerciseId}`, {
+                //             method: "PUT"
+                //         })
+                //     }catch(error) {
+                //         console.log(error.stack)
+                //     }
+                // })
+
                 $(myExercisesContainer).fadeIn(1000);
                 $(myWorkoutsContainer).hide()
             
