@@ -189,34 +189,59 @@ data.forEach((workout) => {
                     $(editContainer).hide();
                     let editExerciseNameInput = document.createElement('input');
                    editExerciseNameInput.placeholder = 'exercise name';
-                   editContainer.appendChild(editExerciseNameInput)
+                   editExerciseNameInput.id = 'editExerciseNameInput';
+                   editContainer.appendChild(editExerciseNameInput);
                    let editSetsInput = document.createElement('input');
                    editSetsInput.placeholder = 'sets';
+                   editSetsInput.id = 'editSetsInput';
                    editContainer.appendChild(editSetsInput);
                    let editRepsInput = document.createElement('input');
                    editRepsInput.placeholder = 'reps';
+                   editRepsInput.id = 'editRepsInput'
                    editContainer.appendChild(editRepsInput);
                     let submitChangesButton = document.createElement('button');
                     submitChangesButton.className = 'rounded-button';
                     submitChangesButton.textContent = 'submit changes';
                     editContainer.appendChild(submitChangesButton);
-                   editExerciseButton.addEventListener('click', () => {
+                   editExerciseButton.addEventListener('click', (e) => {
                    $(editContainer).toggle();
+                   let exerciseId = exercise.id
+                   localStorage.setItem('exerciseId', exerciseId)
+                   console.log(exerciseId)
                 })
-                
-                // editExerciseButton.addEventListener('click', async(e) => {
-                //     let exerciseId = exercise.id
-                //     localStorage.setItem('exerciseId', exerciseId)
-                //     console.log(exerciseId)
-                //     try{
-                       
-                //         let response = await fetch(`http://localhost:3000/api/all_exercises/${exerciseId}`, {
-                //             method: "PUT"
-                //         })
-                //     }catch(error) {
-                //         console.log(error.stack)
-                //     }
-                // })
+
+                submitChangesButton.addEventListener('click', async(e) => {
+                    let exerciseId = exercise.id
+                    localStorage.setItem('exerciseId', exerciseId)
+                    let workoutId = localStorage.getItem('workoutId')
+                    console.log(exerciseId)
+                    let exerciseNameValue = document.getElementById('editExerciseNameInput').value;
+                    let setsValue = document.getElementById('editSetsInput').value;
+                    let repsValue = document.getElementById('editRepsInput').value
+                    try{
+                        let response = await fetch(`http://localhost:3000/api/all_exercises/${exerciseId}`, {
+                            method: "PUT",
+                            body: JSON.stringify({
+                                exercise: exerciseNameValue,
+                                set_number: setsValue,
+                                reps: repsValue,
+                                users_id: workoutId
+                            }),
+                            headers: {
+                            "Content-Type": 'application/json; charset=UTF-8'
+                        }
+                        });
+                        // console.log(await response.json());
+                        if(response.ok) {
+                            let resData = await response.json();
+                            console.log('exercise was edited', resData);
+                        } else {
+                            console.log('exercise failed to edit')
+                        }
+                    }catch(error) {
+                        console.log(error.stack)
+                    }
+                })
 
                 $(myExercisesContainer).fadeIn(1000);
                 $(myWorkoutsContainer).hide()
