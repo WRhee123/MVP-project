@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('beforeunload', () => {
         localStorage.removeItem('userId');
         localStorage.removeItem('workoutId');
+        localStorage.removeItem('exerciseId');
     })
 
 const createTitleContainer =() => {let titleContainer = document.createElement('div');
@@ -79,30 +80,113 @@ myWorkoutsContainer.style.width = '92.8vw';
 myWorkoutsContainer.style.justifyContent = 'flex-start';
 myWorkoutsContainer.style.backgroundColor = '#14213D';
 body.appendChild(myWorkoutsContainer);
+
+let secondDelete = document.createElement('button');
+secondDelete.textContent = 'Delete workout';
+secondDelete.className = 'rounded-button';
+
+
+let myExercisesContainer = document.createElement('div');
+myExercisesContainer.style.display = 'flex';
+myExercisesContainer.id = "myWorkoutsContainer";
+myExercisesContainer.style.flexWrap = 'wrap';
+myExercisesContainer.style.flexDirection = 'row';
+myExercisesContainer.style.height = '80vh';
+myExercisesContainer.style.width = '92.8vw';
+myExercisesContainer.style.justifyContent = 'flex-start';
+myExercisesContainer.style.backgroundColor = '#14213D';
+body.appendChild(myExercisesContainer)
 $(mainContainer).hide();
 $(workoutContainer).hide();
 $(createWorkoutContainer).hide();
 $(loginContainer).hide();
 $(addExerciseContainer).hide();
-$(myWorkoutsContainer).fadeIn(1000);
 
 data.forEach((workout) => {
     let container = document.createElement('div');
     container.style.height = '15vh';
     container.style.width = '15vw';
-    container.style.backgroundColor = 'white';
+    container.style.backgroundColor = '#E5E5E5';
     container.style.justifyContent = 'space-around';
+    container.style.borderRadius = '5px'
     container.style.marginTop = '10px';
     container.style.marginLeft = '10px';
     myWorkoutsContainer.appendChild(container);
     let h1 = document.createElement('h1');
     h1.textContent = workout.workout_name
     container.appendChild(h1);
+    container.addEventListener('click', async(e) => {
+        let workoutNameValue = h1.textContent;
+        let workoutId = workout.id
+        localStorage.setItem('workoutId', workoutId)
+        console.log(workoutId);
+        // let userId = localStorage.getItem('userId');
+        console.log(`click on workout ${workoutNameValue} with workout id ${workoutId}`);
+        try{
+            let response = await fetch(`http://localhost:3000/api/all_exercises/${workoutId}`)
+            let result = await response.json();
+            console.log(result)
+            result.forEach((exercise) => {
+                let exerciseDiv = document.createElement('div');
+                exerciseDiv.style.height = '25vh';
+                exerciseDiv.style.width = '15vw';
+                exerciseDiv.style.backgroundColor = '#E5E5E5';
+                exerciseDiv.style.borderRadius = '5px'
+                exerciseDiv.style.justifyContent = 'space-around';
+                exerciseDiv.style.marginTop = '10px';
+                exerciseDiv.style.marginLeft = '10px';
+                myExercisesContainer.appendChild(exerciseDiv);
+                let h1 = document.createElement('h1');
+                h1.textContent = exercise.exercise;
+                exerciseDiv.appendChild(h1)
+                
+                let sets = document.createElement('h3');
+                let setsNumber = exercise.set_number
+                sets.textContent = `sets: ${setsNumber}`
+                exerciseDiv.appendChild(sets);
+
+                let reps = document.createElement('h3');
+                let repsNumber = exercise.reps
+                reps.textContent = `reps: ${repsNumber}`;
+                exerciseDiv.appendChild(reps)
+
+                let secondDelete = document.createElement('button');
+                secondDelete.textContent = 'delete exercise';
+                secondDelete.className = 'rounded-button';
+                exerciseDiv.appendChild(secondDelete);
+
+                secondDelete.addEventListener('click', async(e) => {
+                    let exerciseId = exercise.id
+                    localStorage.setItem('exerciseId', exerciseId)
+                    console.log(exerciseId)
+                    try {
+                        const response = await fetch(`http://localhost:3000/api/all_exercises/${exerciseId}`, {
+                            method: 'DELETE'
+                        });
+                        if(response.ok) {
+                            let resData = await response.json();
+                            alert(`exercise deleted`, resData)
+                        } else {
+                            alert('failed to delete exercise')
+                        }
+                    }catch(error) {
+                        console.log(error.stack)
+                    }
+                })
+                $(myExercisesContainer).fadeIn(1000);
+                $(myWorkoutsContainer).hide()
+            
+            })
+        }catch(error) {
+            console.log(error.stack)
+        }
+
+    })
 })
 }catch(error) {
 console.log(error.stack);
 }
-}
+};
 
 let myWorkoutsButton = document.createElement('button');
 myWorkoutsButton.textContent = 'My Workouts';
@@ -233,7 +317,7 @@ console.log(error.stack);
 let createWorkoutContainer = document.createElement('div');
 createWorkoutContainer.style.height = '75vh';
 createWorkoutContainer.style.width= '98.2vw';
-createWorkoutContainer.style.backgroundColor = 'green';
+createWorkoutContainer.style.backgroundColor = '#14213D';
 createWorkoutContainer.style.textAlign = 'center';
 // createWorkoutContainer.style.display = 'flex';
 // createWorkoutContainer.style.flexDirection ='row';
@@ -251,7 +335,7 @@ $(createWorkoutContainer).hide();
 let workoutNameInput = document.createElement('input');
 workoutNameInput.style.borderRadius = '5px';
 workoutNameInput.style.height = '30px';
-workoutNameInput.style.width = '50px'
+workoutNameInput.style.width = '150px'
 workoutNameInput.id = 'workoutName';
 workoutNameInput.type = 'text';
 createWorkoutContainer.appendChild(workoutNameInput);
@@ -272,6 +356,7 @@ deleteWorkoutButton.className = 'rounded-button';
 createWorkoutContainer.appendChild(deleteWorkoutButton)
 
 
+
 //might need to edit later 
 deleteWorkoutButton.addEventListener('click', async() => {
     try {
@@ -289,6 +374,8 @@ deleteWorkoutButton.addEventListener('click', async() => {
         });
         if(response.ok) {
             let resData = await response.json();
+            let resDataName = resData.workout_name
+            alert(`${resDataName} was deleted`)
             console.log('Workout deleted', resData)
         } else {
             console.log('Failed to delete workout')
@@ -304,7 +391,7 @@ addExerciseContainer.style.display = 'flex';
 addExerciseContainer.style.flexDirection = 'column';
 addExerciseContainer.style.height = '75vh';
 addExerciseContainer.style.width = '98.2vw';
-addExerciseContainer.style.backgroundColor = 'yellow';
+addExerciseContainer.style.backgroundColor = '#14213D';
 body.appendChild(addExerciseContainer);
 $(addExerciseContainer).hide();
 
@@ -416,7 +503,7 @@ submitButton.addEventListener('click', () => {
 })
 
 let createWorkoutButton = document.createElement('button');
-createWorkoutButton.textContent = 'Create Workout';
+createWorkoutButton.textContent = 'Create/Delete Workout';
 createWorkoutButton.className = 'rounded-button';
 buttonContainer.appendChild(createWorkoutButton)
 createWorkoutButton.addEventListener('click', () => {
@@ -451,7 +538,7 @@ workoutContainer.style.flexDirection = 'row';
 workoutContainer.style.justifyContent = 'space-around';
 workoutContainer.style.height = '75vh';
 workoutContainer.style.width = '98vw';
-workoutContainer.style.backgroundColor = 'red';
+workoutContainer.style.backgroundColor = '#14213D';
 body.appendChild(workoutContainer);
 $(workoutContainer).hide();
 
@@ -486,7 +573,7 @@ homePage();
       pushContainer.style.borderRadius = '10px';
     pushContainer.style.height = '30vh';
     pushContainer.style.width = '15vw';
-    pushContainer.style.backgroundColor = 'white';
+    pushContainer.style.backgroundColor = '#E5E5E5';
     workoutContainer.appendChild(pushContainer) ;
     
     let h1 = document.createElement('h1');
@@ -534,7 +621,7 @@ homePage();
       pullContainer.style.borderRadius = '10px';
     pullContainer.style.height = '30vh';
     pullContainer.style.width = '15vw';
-    pullContainer.style.backgroundColor = 'white';
+    pullContainer.style.backgroundColor = '#E5E5E5';
     workoutContainer.appendChild(pullContainer) ;
     
     let h1 = document.createElement('h1');
@@ -584,7 +671,7 @@ legsButton.addEventListener('click', async() => {
       legsContainer.style.margin = '10px';
     legsContainer.style.height = '30vh';
     legsContainer.style.width = '15vw';
-    legsContainer.style.backgroundColor = 'white';
+    legsContainer.style.backgroundColor = '#E5E5E5';
     workoutContainer.appendChild(legsContainer) ;
     
     let h1 = document.createElement('h1');
